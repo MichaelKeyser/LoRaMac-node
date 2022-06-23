@@ -1,21 +1,4 @@
-##
-##   ______                              _
-##  / _____)             _              | |
-## ( (____  _____ ____ _| |_ _____  ____| |__
-##  \____ \| ___ |    (_   _) ___ |/ ___)  _ \
-##  _____) ) ____| | | || |_| ____( (___| | | |
-## (______/|_____)_|_|_| \__)_____)\____)_| |_|
-## (C)2013-2017 Semtech
-##  ___ _____ _   ___ _  _____ ___  ___  ___ ___
-## / __|_   _/_\ / __| |/ / __/ _ \| _ \/ __| __|
-## \__ \ | |/ _ \ (__| ' <| _| (_) |   / (__| _|
-## |___/ |_/_/ \_\___|_|\_\_| \___/|_|_\\___|___|
-## embedded.connectivity.solutions.==============
-##
-## License:  Revised BSD License, see LICENSE.TXT file included in the project
-## Authors:  Johannes Bruder (STACKFORCE), Miguel Luis (Semtech)
-##
-project(loramac-node)
-cmake_minimum_required(VERSION 3.6)
+#edit this to be updated
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
+idf_component_register(SRCS "src/radio/sx1276.c" "src/mac/LoRaMac.c" "src/mac/LoRaMacParser.c" "src/mac/LoRaMacCrypto.c" "src/mac/LoRaMacCommands.c" "src/mac/LoRaMacSerializer.c" "src/mac/region/RegionBaseUS.c" "src/mac/region/Region.c" "src/mac/region/RegionCommon.c" "src/mac/region/RegionUS915.c" "src/mac/LoRaMacAdr.c" "src/mac/LoRaMacClassB.c" "src/mac/LoRaMacConfirmQueue.c" "src/system/systime.c" "src/system/timer.c" "src/system/nvmm.c" "src/system/gpio.c" "src/system/delay.c" "src/system/i2c.c" "src/system/fifo.c" "src/system/adc.c" "src/system/gps.c" "src/system/uart.c" "src/boards/utilities.c" 
+                    INCLUDE_DIRS "src/boards" "src/mac" "src/radio" "src/system" "src/mac/region")
