@@ -1,3 +1,7 @@
+/*
+Functions for interfacing (mainly initalizing) with the RF board
+*/
+
 #include <stdlib.h>
 #include "utilities.h"
 #include "board-config.h"
@@ -127,6 +131,7 @@ void SX1276SetBoardTcxo( uint8_t state )
     }
 #endif
 }
+
 
 
 uint32_t SX1276GetBoardTcxoWakeupTime( void )

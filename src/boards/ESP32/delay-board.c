@@ -1,3 +1,6 @@
+/*
+Implements delays on the ESP32
+*/
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"

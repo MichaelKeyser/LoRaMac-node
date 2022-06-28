@@ -1,3 +1,7 @@
+/*
+Sets up the ESP and its peripherals
+*/
+
 #include "utilities.h"
 #include "board.h"
 #include "rtc-board.h"

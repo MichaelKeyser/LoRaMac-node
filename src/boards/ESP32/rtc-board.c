@@ -1,3 +1,6 @@
+/*
+Functions for interfacing with RTC on the ESP
+*/
 #include "rtc-board.h"
 
 // MCU Wake Up Time

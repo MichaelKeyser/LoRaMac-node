@@ -1,3 +1,7 @@
+/*
+Functions for interfacing with the SPI
+*/
+
 #include "spi-board.h"
 
 uint16_t SpiInOut( Spi_t *obj, uint16_t outData )

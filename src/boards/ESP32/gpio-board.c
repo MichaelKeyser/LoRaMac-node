@@ -1,3 +1,6 @@
+/*
+Functions for interfacing with the GPIOs on the ESP
+*/
 #include "gpio-board.h"
 
 /*!
