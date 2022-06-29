@@ -30,3 +30,20 @@ uint16_t SpiInOut( Spi_t *obj, uint16_t outData )
     */
    return 0;
 }
+
+/*!
+ * \brief Initializes the SPI object and MCU peripheral
+ *
+ * \remark When NSS pin is software controlled set the pin name to NC otherwise
+ *         set the pin name to be used.
+ *
+ * \param [IN] obj  SPI object
+ * \param [IN] mosi SPI MOSI pin name to be used
+ * \param [IN] miso SPI MISO pin name to be used
+ * \param [IN] sclk SPI SCLK pin name to be used
+ * \param [IN] nss  SPI NSS pin name to be used
+ */
+void SpiInit( Spi_t *obj, SpiId_t spiId, PinNames mosi, PinNames miso, PinNames sclk, PinNames nss )
+{
+    
+}
