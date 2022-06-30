@@ -1,7 +1,7 @@
 /*
 Related pins from ESP to the RF board
 */
-#define FILL_ME_IN 0
+#define FILL_ME_IN NC
 
 
 
