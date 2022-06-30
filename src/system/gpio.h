@@ -34,16 +34,15 @@ extern "C"
 
 #include <stdint.h>
 #include "pinName-board.h"
-#include "pinName-ioe.h"
+//#include "pinName-ioe.h"
 
 /*!
  * Board GPIO pin names
  */
 typedef enum
 {
-    //GPIO0 = 0, GPIO1 = 1, GPIO = 2, GPIO = 3, GPIO = 4, GPIO = 5, GPIO = 6
     MCU_PINS,
-    IOE_PINS,//
+    IOE_PINS,
 
     // Not connected
     NC = (int)0xFFFFFFFF
@@ -113,9 +112,9 @@ typedef void( GpioIrqHandler )( void* context );
 typedef struct
 {
     PinNames  pin;
-    uint16_t pinIndex;
-    void *port;
-    uint16_t portIndex;
+    //uint16_t pinIndex;
+    //void *port;
+    //uint16_t portIndex;
     PinTypes pull;
     void* Context;
     GpioIrqHandler* IrqHandler;

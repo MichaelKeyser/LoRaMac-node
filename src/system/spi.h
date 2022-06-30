@@ -29,14 +29,16 @@ extern "C"
 #endif
 
 #include "gpio.h"
+#include "hal/spi_types.h"
 
 /*!
  * SPI peripheral ID
  */
 typedef enum
 {
-    SPI_1,
-    SPI_2,
+    SPI_0 = SPI1_HOST, // link the SPI enum to the underlying ESP SPI interface
+    SPI_1 = SPI2_HOST,
+    SPI_2 = SPI3_HOST
 }SpiId_t;
 
 /*!

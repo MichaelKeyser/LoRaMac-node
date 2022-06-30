@@ -3,6 +3,7 @@ Functions for interfacing with the SPI
 */
 
 #include "spi-board.h"
+//#include "hal/spi_types"
 
 uint16_t SpiInOut( Spi_t *obj, uint16_t outData )
 {

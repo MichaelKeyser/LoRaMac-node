@@ -1913,7 +1913,7 @@ static void SX1276OnDio2Irq( void* context )
             {
             case MODEM_FSK:
                 // Checks if DIO4 is connected. If it is not PreambleDetected is set to true.
-                if( SX1276.DIO4.port == NULL )
+                if( SX1276.DIO4.pin != NC ) // CHANGED TO BUILD, NOT NECESSARILY CORRECT
                 {
                     SX1276.Settings.FskPacketHandler.PreambleDetected = true;
                 }

@@ -1,5 +1,5 @@
 /*
-Functions for interfacing with the GPIOs on the ESP
+Functions for interfacing with the GPIOs on the ESP. The ESP does not have the same GPIO port structure like the STM.
 */
 #include "gpio-board.h"
 
@@ -14,7 +14,10 @@ Functions for interfacing with the GPIOs on the ESP
  * \param [IN] type   Pin type [PIN_NO_PULL, PIN_PULL_UP, PIN_PULL_DOWN]
  * \param [IN] value  Default output value at initialization
  */
-void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinTypes type, uint32_t value ){}
+void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinTypes type, uint32_t value )
+{
+
+}
 
 /*!
  * \brief Sets a user defined object pointer

@@ -1,12 +1,12 @@
 /*
 Related pins from ESP to the RF board
 */
-#define FILL_ME_IN NC
-
-
 
 #ifndef __BOARD_CONFIG_H__
 #define __BOARD_CONFIG_H__
+
+#define FILL_ME_IN NC
+
 
 // MCU specific
 #define RADIO_RESET                                 GPIO7
