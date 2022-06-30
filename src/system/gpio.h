@@ -41,8 +41,9 @@ extern "C"
  */
 typedef enum
 {
+    //GPIO0 = 0, GPIO1 = 1, GPIO = 2, GPIO = 3, GPIO = 4, GPIO = 5, GPIO = 6
     MCU_PINS,
-    IOE_PINS,
+    IOE_PINS,//
 
     // Not connected
     NC = (int)0xFFFFFFFF
