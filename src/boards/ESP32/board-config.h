@@ -9,18 +9,18 @@ Related pins from ESP to the RF board
 
 
 // MCU specific
-#define RADIO_RESET                                 GPIO7
+#define RADIO_RESET                                 GPIO_NUM_7
 
-#define RADIO_MOSI                                  GPIO12
-#define RADIO_MISO                                  GPIO13
-#define RADIO_SCLK                                  GPIO14
+#define RADIO_MOSI                                  GPIO_NUM_12
+#define RADIO_MISO                                  GPIO_NUM_13
+#define RADIO_SCLK                                  GPIO_NUM_14
 
 
 // radio specific 
-#define RADIO_NSS                                   GPIO15
+#define RADIO_NSS                                   GPIO_NUM_15
 
-#define RADIO_DIO_0                                 GPIO5
-#define RADIO_DIO_1                                 GPIO6
+#define RADIO_DIO_0                                 GPIO_NUM_5
+#define RADIO_DIO_1                                 GPIO_NUM_6
 #define RADIO_DIO_2                                 FILL_ME_IN
 #define RADIO_DIO_3                                 FILL_ME_IN
 #define RADIO_DIO_4                                 FILL_ME_IN

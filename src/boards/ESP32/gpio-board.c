@@ -16,7 +16,7 @@ Functions for interfacing with the GPIOs on the ESP. The ESP does not have the s
  */
 void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinTypes type, uint32_t value )
 {
-
+    
 }
 
 /*!
