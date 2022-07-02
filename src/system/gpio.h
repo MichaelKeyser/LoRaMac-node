@@ -34,7 +34,7 @@ extern "C"
 
 #include <stdint.h>
 #include "pinName-board.h"
-#include "hal/gpio_types.h"
+//#include "hal/gpio_types.h"
 //#include "pinName-ioe.h"
 
 /*!
@@ -54,8 +54,8 @@ typedef enum
  */
 typedef enum
 {
-    PIN_INPUT = GPIO_MODE_INPUT,
-    PIN_OUTPUT = GPIO_MODE_OUTPUT,
+    PIN_INPUT,// = GPIO_MODE_INPUT,
+    PIN_OUTPUT,// = GPIO_MODE_OUTPUT,
     PIN_ALTERNATE_FCT, // TODO: FIGURE OUT EQUIVALENT PROVIDED PINMODE
     PIN_ANALOGIC
 }PinModes;
@@ -84,10 +84,10 @@ typedef enum
  */
 typedef enum
 {
-    NO_IRQ = 0,
-    IRQ_RISING_EDGE,
-    IRQ_FALLING_EDGE,
-    IRQ_RISING_FALLING_EDGE
+    NO_IRQ = 0,// = GPIO_INTR_DISABLE,
+    IRQ_RISING_EDGE,// = GPIO_INTR_POSEDGE,
+    IRQ_FALLING_EDGE,// = GPIO_INTR_NEGEDGE,
+    IRQ_RISING_FALLING_EDGE// = GPIO_INTR_ANYEDGE
 }IrqModes;
 
 /*!
@@ -113,9 +113,9 @@ typedef void( GpioIrqHandler )( void* context );
 typedef struct
 {
     PinNames  pin;
-    //uint16_t pinIndex;
-    //void *port;
-    //uint16_t portIndex;
+    uint16_t pinIndex; //unused in esp32
+    void *port; //unused in esp32
+    uint16_t portIndex; //unused in esp32
     PinTypes pull;
     void* Context;
     GpioIrqHandler* IrqHandler;
