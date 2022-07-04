@@ -9,6 +9,7 @@ Functions for interfacing with the GPIOs on the ESP. The ESP does not have the s
 // Uses the IrqModes in gpio.h as indicies to map to the ESP32 IRQ modes
 char IrqModes_conversion[4] = {GPIO_INTR_DISABLE, GPIO_INTR_POSEDGE, GPIO_INTR_NEGEDGE, GPIO_INTR_ANYEDGE};
 
+
 /*!
  * \brief Initializes the given GPIO object
  *
@@ -22,7 +23,9 @@ char IrqModes_conversion[4] = {GPIO_INTR_DISABLE, GPIO_INTR_POSEDGE, GPIO_INTR_N
  */
 void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinTypes type, uint32_t value )
 {
-    
+    obj->pin = pin;
+    obj->pull = type;
+
 }
 
 /*!
