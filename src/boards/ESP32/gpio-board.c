@@ -7,7 +7,9 @@ Functions for interfacing with the GPIOs on the ESP. The ESP does not have the s
 #include "gpio.h"
 
 // Uses the IrqModes in gpio.h as indicies to map to the ESP32 IRQ modes
-char IrqModes_conversion[4] = {GPIO_INTR_DISABLE, GPIO_INTR_POSEDGE, GPIO_INTR_NEGEDGE, GPIO_INTR_ANYEDGE};
+gpio_int_type_t IrqModes_conversion[4] = {GPIO_INTR_DISABLE, GPIO_INTR_POSEDGE, GPIO_INTR_NEGEDGE, GPIO_INTR_ANYEDGE};
+gpio_mode_t PinTypes_conversion[3] = {GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_DISABLE, GPIO_MODE_DISABLE};
+
 
 
 /*!
@@ -23,8 +25,32 @@ char IrqModes_conversion[4] = {GPIO_INTR_DISABLE, GPIO_INTR_POSEDGE, GPIO_INTR_N
  */
 void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinTypes type, uint32_t value )
 {
-    obj->pin = pin;
-    obj->pull = type;
+    //obj->pin = pin;
+    //obj->pull = type;
+    
+    gpio_config_t gpio;
+    gpio.pin_bit_mask = 0;//(uint64_t)((1 << (uint64_t)pin) | (0x0000000000000000));
+    gpio.mode = PinTypes_conversion[(int)mode];
+    
+    if((char)type == (char)PIN_PULL_UP) // pull-up
+    {
+        gpio.pull_up_en = GPIO_PULLUP_ENABLE;
+        gpio.pull_down_en = GPIO_PULLDOWN_DISABLE;
+    }
+    else if((char)type == (char)PIN_PULL_DOWN) // pull-down
+    {
+        gpio.pull_up_en = GPIO_PULLUP_DISABLE;
+        gpio.pull_down_en = GPIO_PULLDOWN_ENABLE;
+    }
+    else // neither pull-up or pull-down
+    {
+        gpio.pull_up_en = GPIO_PULLUP_DISABLE;
+        gpio.pull_down_en = GPIO_PULLDOWN_DISABLE;
+    }
+
+    //gpio.intr_type = IrqModes_conversion[(char)]
+
+    gpio_config(&gpio);
 
 }
 
@@ -49,6 +75,8 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
  */
 void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority, GpioIrqHandler *irqHandler )
 {
+    // Ignore interrupt priority level 
+
     // figure out if enable goes first or last
     gpio_num_t gpio_num = obj->pin;
     
@@ -78,7 +106,7 @@ void GpioMcuRemoveInterrupt( Gpio_t *obj )
 void GpioMcuWrite( Gpio_t *obj, uint32_t value )
 {
     gpio_num_t gpio_num = obj->pin; // ASK ABOUT THE CASTING WITH THIS
-    esp_err_t out = gpio_set_level(gpio_num, value);
+    gpio_set_level(gpio_num, value);
     // TODO: PUT IN ERROR HANDLING
 }
 

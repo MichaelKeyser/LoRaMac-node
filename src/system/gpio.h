@@ -65,8 +65,8 @@ typedef enum
  */
 typedef enum
 {
-    PIN_NO_PULL = 0,
-    PIN_PULL_UP,
+    PIN_NO_PULL = 0, // likely external resistor 
+    PIN_PULL_UP, // resistor to Vdd
     PIN_PULL_DOWN
 }PinTypes;
 
