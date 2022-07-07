@@ -25,13 +25,19 @@ gpio_mode_t PinTypes_conversion[3] = {GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MO
  */
 void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinTypes type, uint32_t value )
 {
-    //obj->pin = pin;
-    //obj->pull = type;
+    // update the LoRa GPIO obj
+    obj->pin = pin;
+    obj->pull = type;
     
+    // configure a gpio on the ESP
     gpio_config_t gpio;
-    gpio.pin_bit_mask = 0;//(uint64_t)((1 << (uint64_t)pin) | (0x0000000000000000));
+
+    // set bit mask that selects the specified gpio
+    gpio.pin_bit_mask = (uint64_t)((1 << (uint64_t)pin) | (0x0000000000000000));
+    // select the pin mode
     gpio.mode = PinTypes_conversion[(int)mode];
     
+    // configure the pin pull-up settings
     if((char)type == (char)PIN_PULL_UP) // pull-up
     {
         gpio.pull_up_en = GPIO_PULLUP_ENABLE;
@@ -49,7 +55,8 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
     }
 
     //gpio.intr_type = IrqModes_conversion[(char)]
-
+    
+    // configure the gpio
     gpio_config(&gpio);
 
 }
