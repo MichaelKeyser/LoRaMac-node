@@ -59,6 +59,10 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
     // configure the gpio
     gpio_config(&gpio);
 
+    // set the gpio output
+    gpio_num_t gpio_num = pin; // ASK ABOUT THE CASTING WITH THIS
+    gpio_set_level(gpio_num, value);
+
 }
 
 /*!
