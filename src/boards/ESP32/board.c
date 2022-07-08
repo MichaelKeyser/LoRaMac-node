@@ -12,9 +12,12 @@ Sets up the ESP and its peripherals
 #include "sx1276-board.h"
 #include <xtensa/xtensa_api.h>
 
+#include <stdio.h>
+#include "esp_log.h"
 void BoardInitMcu()
 {
     SpiInit(&SX1276.Spi, SPI_1, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, NC);
+    printf("spi init complete \n");
     SX1276IoInit( );
     
 }

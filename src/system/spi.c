@@ -26,13 +26,24 @@ spi_host_device_t Spi_Id_conversion[3] = {SPI1_HOST, SPI2_HOST, SPI3_HOST};
  */
 void SpiInit( Spi_t *obj, SpiId_t spiId, PinNames mosi, PinNames miso, PinNames sclk, PinNames nss )
 {
-    /* Initialize all this later
-    obj->SpiId = (SpiId_t)spiId;
-    obj->Mosi = mosi;
-    obj->Miso = miso;
-    obj->Sclk = sclk;
-    obj->Nss = nss;
-    */
+    // Initalize Gpio_t structs to setup gpio
+    Gpio_t mosi_g;
+    mosi_g.pin = mosi;
+    Gpio_t miso_g;
+    miso_g.pin = miso;
+    Gpio_t sclk_g;
+    sclk_g.pin = sclk;
+    Gpio_t nss_g;
+    nss_g.pin = nss;
+    
+    // Initialize spi object
+    obj->SpiId = spiId;
+    obj->Mosi = mosi_g;
+    obj->Miso = miso_g;
+    obj->Sclk = sclk_g;
+    obj->Nss = nss_g;
+    
+    
 
    //#define CONFIG_CS_GPIO nss
 

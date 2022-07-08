@@ -23,6 +23,8 @@ gpio_mode_t PinTypes_conversion[3] = {GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MO
  * \param [IN] type   Pin type [PIN_NO_PULL, PIN_PULL_UP, PIN_PULL_DOWN]
  * \param [IN] value  Default output value at initialization
  */
+#include <stdio.h>
+#include "esp_log.h"
 void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinTypes type, uint32_t value )
 {
     // update the LoRa GPIO obj
@@ -34,6 +36,7 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
 
     // set bit mask that selects the specified gpio
     gpio.pin_bit_mask = 1 << (int)pin;//(uint64_t)((1 << (uint64_t)pin) | (0x0000000000000000));
+    
     // select the pin mode
     gpio.mode = PinTypes_conversion[(int)mode];
     
@@ -54,7 +57,8 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
         gpio.pull_down_en = GPIO_PULLDOWN_DISABLE;
     }
 
-    //gpio.intr_type = IrqModes_conversion[(char)]
+    // default the GPIO interrupt to disabled
+    gpio.intr_type = GPIO_INTR_DISABLE;
     
     // configure the gpio
     gpio_config(&gpio);
@@ -95,6 +99,7 @@ void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriori
 
     // TODO: FIGURE OUT HOW TO SPECIFY INTERRUPT PRIOTITY
     gpio_intr_enable(gpio_num);
+    printf("after interrupt enable\n");
 }
 
 /*!

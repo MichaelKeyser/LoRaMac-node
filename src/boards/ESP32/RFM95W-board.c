@@ -69,16 +69,24 @@ Gpio_t DbgPinTx;
 Gpio_t DbgPinRx;
 #endif
 
+#include <stdio.h>
+#include "esp_log.h"
 void SX1276IoInit( void )
 {
-    GpioInit( &SX1276.Spi.Nss, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
-
+    GpioInit( &SX1276.Spi.Nss, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 ); 
+    printf("gpio 1 complete \n");
     GpioInit( &SX1276.DIO0, RADIO_DIO_0, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    printf("gpio 2 complete \n");
     GpioInit( &SX1276.DIO1, RADIO_DIO_1, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    printf("gpio 3 complete \n");
     GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    printf("gpio 4 complete \n");
     GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    printf("gpio 5 complete \n");
     GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    printf("gpio 6 complete \n");
     GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    printf("gpio 7 complete \n");
 }
 
 void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
