@@ -33,7 +33,7 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
     gpio_config_t gpio;
 
     // set bit mask that selects the specified gpio
-    gpio.pin_bit_mask = (uint64_t)((1 << (uint64_t)pin) | (0x0000000000000000));
+    gpio.pin_bit_mask = 1 << (int)pin;//(uint64_t)((1 << (uint64_t)pin) | (0x0000000000000000));
     // select the pin mode
     gpio.mode = PinTypes_conversion[(int)mode];
     
