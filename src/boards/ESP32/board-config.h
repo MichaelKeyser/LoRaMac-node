@@ -5,7 +5,7 @@ Related pins from ESP to the RF board
 #ifndef __BOARD_CONFIG_H__
 #define __BOARD_CONFIG_H__
 
-#define FILL_ME_IN NC
+#include "/Users/michael/Documents/Senior_Project/ESP/test_lorawan/main/debug.c" 
 
 
 // MCU specific
@@ -21,6 +21,7 @@ Related pins from ESP to the RF board
 
 #define RADIO_DIO_0                                 GPIO_NUM_5
 #define RADIO_DIO_1                                 GPIO_NUM_6
+
 #define RADIO_DIO_2                                 FILL_ME_IN
 #define RADIO_DIO_3                                 FILL_ME_IN
 #define RADIO_DIO_4                                 FILL_ME_IN

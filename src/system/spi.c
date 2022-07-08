@@ -56,8 +56,8 @@ void SpiInit( Spi_t *obj, SpiId_t spiId, PinNames mosi, PinNames miso, PinNames 
       .max_transfer_sz = 0
    }; 
 
-   #define VSPI_HOST SPI3_HOST //edited to make build work        
-   esp_err_t ret = spi_bus_initialize(VSPI_HOST, &bus, 0); 
+   //#define VSPI_HOST SPI3_HOST //edited to make build work        
+   esp_err_t ret = spi_bus_initialize(spiId, &bus, 0); 
    assert(ret == ESP_OK);
 
    spi_device_interface_config_t dev = {
@@ -68,7 +68,7 @@ void SpiInit( Spi_t *obj, SpiId_t spiId, PinNames mosi, PinNames miso, PinNames 
       .flags = 0,
       .pre_cb = NULL
    };
-   ret = spi_bus_add_device(VSPI_HOST, &dev, &__spi);
+   ret = spi_bus_add_device(spiId, &dev, &__spi);
    assert(ret == ESP_OK);
 }
 

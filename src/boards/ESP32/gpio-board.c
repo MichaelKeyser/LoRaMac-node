@@ -23,8 +23,9 @@ gpio_mode_t PinTypes_conversion[3] = {GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MO
  * \param [IN] type   Pin type [PIN_NO_PULL, PIN_PULL_UP, PIN_PULL_DOWN]
  * \param [IN] value  Default output value at initialization
  */
-#include <stdio.h>
-#include "esp_log.h"
+
+#include "/Users/michael/Documents/Senior_Project/ESP/test_lorawan/main/debug.c"
+
 void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinTypes type, uint32_t value )
 {
     // update the LoRa GPIO obj

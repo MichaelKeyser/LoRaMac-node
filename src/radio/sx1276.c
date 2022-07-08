@@ -307,7 +307,7 @@ TimerEvent_t RxTimeoutSyncWord;
 /*
  * Radio driver functions implementation
  */
-
+#include "/Users/michael/Documents/Senior_Project/ESP/test_lorawan/main/debug.c"
 void SX1276Init( RadioEvents_t *events )
 {
     uint8_t i;
@@ -319,12 +319,16 @@ void SX1276Init( RadioEvents_t *events )
     TimerInit( &RxTimeoutTimer, SX1276OnTimeoutIrq );
     TimerInit( &RxTimeoutSyncWord, SX1276OnTimeoutIrq );
 
+    
     SX1276Reset( );
 
+    
     RxChainCalibration( );
 
+    printf("Calibration works\n");
     SX1276SetOpMode( RF_OPMODE_SLEEP );
 
+    printf("setting opmode works\n");
     SX1276IoIrqInit( DioIrq );
 
     for( i = 0; i < sizeof( RadioRegsInit ) / sizeof( RadioRegisters_t ); i++ )
