@@ -1235,14 +1235,14 @@ static void SX1276SetOpMode( uint8_t opMode )
 #endif
     if( opMode == RF_OPMODE_SLEEP )
     {
-        SX1276SetAntSwLowPower( true );
+        //SX1276SetAntSwLowPower( true );
     }
     else
     {
         // Enable TCXO if operating mode different from SLEEP.
         SX1276SetBoardTcxo( true );
-        SX1276SetAntSwLowPower( false );
-        SX1276SetAntSw( opMode );
+        //SX1276SetAntSwLowPower( false );
+        //SX1276SetAntSw( opMode );
     }
     SX1276Write( REG_OPMODE, ( SX1276Read( REG_OPMODE ) & RF_OPMODE_MASK ) | opMode );
 }
@@ -1298,6 +1298,7 @@ uint8_t SX1276Read( uint32_t addr )
 
 void SX1276WriteBuffer( uint32_t addr, uint8_t *buffer, uint8_t size )
 {
+    
     uint8_t i;
 
     //NSS = 0;
@@ -1311,6 +1312,7 @@ void SX1276WriteBuffer( uint32_t addr, uint8_t *buffer, uint8_t size )
 
     //NSS = 1;
     GpioWrite( &SX1276.Spi.Nss, 1 );
+
 }
 
 void SX1276ReadBuffer( uint32_t addr, uint8_t *buffer, uint8_t size )
@@ -1354,6 +1356,7 @@ void SX1276SetMaxPayloadLength( RadioModems_t modem, uint8_t max )
         }
         break;
     case MODEM_LORA:
+        
         SX1276Write( REG_LR_PAYLOADMAXLENGTH, max );
         break;
     }
