@@ -9,6 +9,7 @@ Functions for interfacing (mainly initalizing) with the RF board
 #include "radio.h"
 #include "sx1276-board.h"
 
+
 /*!
  * \brief Gets the board PA selection configuration
  *
@@ -72,6 +73,7 @@ Gpio_t DbgPinRx;
 //#include "/Users/michael/Documents/Senior_Project/ESP/test_lorawan/main/debug.c"
 void SX1276IoInit( void )
 {
+
     GpioInit( &SX1276.Spi.Nss, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 ); 
     
     GpioInit( &SX1276.DIO0, RADIO_DIO_0, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
