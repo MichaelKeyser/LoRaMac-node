@@ -16,7 +16,7 @@ Sets up the ESP and its peripherals
 #include "esp_log.h"
 void BoardInitMcu()
 {
-    SpiInit(&SX1276.Spi, SPI_1, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, NC);
+    SpiInit(&SX1276.Spi, SPI_2, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, 15);
     printf("spi init complete \n");
     SX1276IoInit( );
     

@@ -50,16 +50,16 @@ void SpiInit( Spi_t *obj, SpiId_t spiId, PinNames mosi, PinNames miso, PinNames 
    //#define CONFIG_CS_GPIO nss
 
    spi_bus_config_t bus = {
-      .miso_io_num = (int) 13,
-      .mosi_io_num = (int) 12,
-      .sclk_io_num = (int) 14,
+      .miso_io_num = miso,
+      .mosi_io_num = mosi,
+      .sclk_io_num = sclk,
       .quadwp_io_num = -1,
       .quadhd_io_num = -1,
       .max_transfer_sz = 0
    }; 
 
    //#define VSPI_HOST SPI3_HOST //edited to make build work        
-   esp_err_t ret = spi_bus_initialize(SPI_2, &bus, 0); // spiId
+   esp_err_t ret = spi_bus_initialize((int) spiId, &bus, 0); // spiId
    assert(ret == ESP_OK);
 
    spi_device_interface_config_t dev = {
@@ -70,7 +70,8 @@ void SpiInit( Spi_t *obj, SpiId_t spiId, PinNames mosi, PinNames miso, PinNames 
       .flags = 0,
       .pre_cb = NULL
    };
-   ret = spi_bus_add_device(SPI_2, &dev, &__spi); // spiId
+   ret = spi_bus_add_device((int) spiId, &dev, &__spi); // spiId
+   gpio_set_level((int)obj->Nss.pin, 1); // turn the connection off
    assert(ret == ESP_OK);
 }
 
@@ -86,52 +87,35 @@ uint16_t SpiInOut( Spi_t *obj, uint16_t outData )
 {
     // TODO: EDIT TO USE outData !!!!!!
     //uint8_t out[2] =  {outData & 0xff, outData >> 8}; //= { 0x80 | reg, val };
-    uint8_t in[2];
-
-    //printf("out is %d, %d \n", out[1], out[0]);
-    
-    char letter[1] = {'H'};
-
+    uint16_t in;
     spi_transaction_t t = {
         .flags = 0,
-        .length = 8 * sizeof(letter),
-        .tx_buffer = letter,
-        .rx_buffer = in  
+        .length = 8 * sizeof(outData),
+        .tx_buffer = &outData,
+        .rx_buffer = &in  
     };
 
-    gpio_set_level(15, 0);
+    // handled when making call to SpiInOut
+    //gpio_set_level((int)obj->Nss.pin, 0);
+    // ESP32 is little-endian so in uint16_t [7:0] is sent and then [15:8] is set
     esp_err_t ret = spi_device_transmit(__spi, &t); // probably should replace this to get stuff back
     assert(ret == ESP_OK);
-    gpio_set_level(15, 1);
-    printf("Byte sent\n");
-    /*
-    esp_err_t ret;
-    spi_transaction_t *ret_trans;
-    //ToDo: check if any spi transfers in flight
-    ret = spi_device_queue_trans(__spi, &t, portMAX_DELAY);
-    if (ret != ESP_OK) 
-    {
-        printf("ERROR\n");
-        return ret;
-    }
     
-
-    ret = spi_device_get_trans_result(__spi, &ret_trans, portMAX_DELAY);
-    if (ret != ESP_OK) 
-    {
-         printf("ERROR\n");
-        return ret;
-    }
-    assert(ret_trans == &t);
-    */
+    // handled when making call to SpiInOut
+    //gpio_set_level((int)obj->Nss.pin, 1);
+    //printf("Byte sent\n");
+    
     //printf("%d\n", in[0]);
     //printf("\n");
     //printf("%d\n", in[1]);
     // THIS IS ASSUMING in[o] is MSB
+    /*
     uint16_t in_val = in[0];
     in_val = in_val << 8;
     in_val |= in[1];
-    return in_val;
+    */
+   //printf("%d\n", in);
+    return in;
     // TODO: COMPLETE RECEIING PART LATER!
 
 

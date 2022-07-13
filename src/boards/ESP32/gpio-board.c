@@ -104,7 +104,7 @@ void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriori
 
     // TODO: FIGURE OUT HOW TO SPECIFY INTERRUPT PRIOTITY
     gpio_intr_enable(gpio_num);
-    printf("after interrupt enable\n");
+    //printf("after interrupt enable\n");
 }
 
 /*!

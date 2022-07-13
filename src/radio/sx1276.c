@@ -319,10 +319,13 @@ void SX1276Init( RadioEvents_t *events )
     TimerInit( &RxTimeoutTimer, SX1276OnTimeoutIrq );
     TimerInit( &RxTimeoutSyncWord, SX1276OnTimeoutIrq );
 
+    printf("timer inits done\n");
     
     SX1276Reset( );
 
+    printf("sx276 reset done\n");
     
+    // CHANGE THE FREQUENCY TO 915MHZ
     RxChainCalibration( );
 
     printf("Calibration works\n");
