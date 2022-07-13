@@ -453,12 +453,14 @@ static void RxChainCalibration( void )
     // Cut the PA just in case, RFO output, power = -1 dBm
     SX1276Write( REG_PACONFIG, 0x00 );
 
+    printf("before first while loop \n");
     // Launch Rx chain calibration for LF band
     SX1276Write( REG_IMAGECAL, ( SX1276Read( REG_IMAGECAL ) & RF_IMAGECAL_IMAGECAL_MASK ) | RF_IMAGECAL_IMAGECAL_START );
     while( ( SX1276Read( REG_IMAGECAL ) & RF_IMAGECAL_IMAGECAL_RUNNING ) == RF_IMAGECAL_IMAGECAL_RUNNING )
     {
     }
 
+    printf("past first while looop\n");
     // Sets a Frequency in HF band
     SX1276SetChannel( 868000000 );
 
