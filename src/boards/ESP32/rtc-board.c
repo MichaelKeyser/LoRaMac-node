@@ -92,16 +92,31 @@ uint32_t RtcGetMinimumTimeout( void )
     return( MIN_ALARM_DELAY );
 }
 
+/*!
+ * \brief Stops the Alarm
+ */
 void RtcStopAlarm( void )
 {
    
 }
 
+/*!
+ * \brief Starts wake up alarm
+ *
+ * \note  Alarm in RtcTimerContext.Time + timeout
+ *
+ * \param [IN] timeout Timeout value in ticks
+ */
 uint32_t RtcGetTimerElapsedTime( void )
 {
   return 0;
 }
 
+/*!
+ * \brief Sets the RTC timer reference
+ *
+ * \retval value Timer reference value in ticks
+ */
 uint32_t RtcSetTimerContext( void )
 {
     /*
@@ -111,6 +126,13 @@ uint32_t RtcSetTimerContext( void )
    return 0;
 }
 
+/*!
+ * \brief Starts wake up alarm
+ *
+ * \note  Alarm in RtcTimerContext.Time + timeout
+ *
+ * \param [IN] timeout Timeout value in ticks
+ */
 void RtcSetAlarm( uint32_t timeout )
 {
     /*

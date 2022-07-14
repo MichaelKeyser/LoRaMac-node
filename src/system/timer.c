@@ -232,35 +232,46 @@ void TimerIrqHandler( void )
     }
 }
 
+#include "/Users/michael/Documents/Senior_Project/ESP/test_lorawan/main/debug.c"
+
 void TimerStop( TimerEvent_t *obj )
 {
+    printf("in timerstop\n");
     CRITICAL_SECTION_BEGIN( );
 
+    printf("past critical section begin\n");
     TimerEvent_t* prev = TimerListHead;
     TimerEvent_t* cur = TimerListHead;
 
     // List is empty or the obj to stop does not exist
     if( ( TimerListHead == NULL ) || ( obj == NULL ) )
     {
+        printf("list is empty or obj not exist\n");
         CRITICAL_SECTION_END( );
         return;
     }
 
     obj->IsStarted = false;
 
+    printf("before if\n");
     if( TimerListHead == obj ) // Stop the Head
     {
+        printf("in if\n");
         if( TimerListHead->IsNext2Expire == true ) // The head is already running
         {
             TimerListHead->IsNext2Expire = false;
             if( TimerListHead->Next != NULL )
             {
+                printf("in timer list head != null");
                 TimerListHead = TimerListHead->Next;
                 TimerSetTimeout( TimerListHead );
+                printf("Timer set timeout complete\n");
             }
             else
             {
+                printf("in timer list head is null\n");
                 RtcStopAlarm( );
+                printf("rtc stop alarm complete\n");
                 TimerListHead = NULL;
             }
         }
@@ -278,6 +289,7 @@ void TimerStop( TimerEvent_t *obj )
     }
     else // Stop an object within the list
     {
+        printf("in else\n");
         while( cur != NULL )
         {
             if( cur == obj )

@@ -10,7 +10,11 @@ Sets up the ESP and its peripherals
 #include "gpio.h"
 #include "spi.h"
 #include "sx1276-board.h"
-#include <xtensa/xtensa_api.h>
+//#include <xtensa/xtensa_api.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
+
 
 #include <stdio.h>
 #include "esp_log.h"
@@ -33,16 +37,20 @@ void BoardInitPeriph( void )
 }
 
 
-
+static portMUX_TYPE lock_name_original = portMUX_INITIALIZER_UNLOCKED;
 // check this functions not sure if correct
 void BoardCriticalSectionBegin( uint32_t *mask )
 {
-    xt_ints_on((unsigned int)*mask);
+    printf("inside board critical section begin\n");
+    //xt_ints_off(*mask);
+    taskENTER_CRITICAL_ISR(&lock_name_original);
+    printf("x ints on\n");
 }
 
 
 // check this functions not sure if correct
 void BoardCriticalSectionEnd( uint32_t *mask )
 {
-   xt_ints_off((unsigned int)*mask );
+   //xt_ints_on((unsigned int)*mask );
+   taskEXIT_CRITICAL_ISR(&lock_name_original);
 }
