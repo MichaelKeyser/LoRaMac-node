@@ -455,20 +455,28 @@ static void RxChainCalibration( void )
 
     printf("before first while loop \n");
     // Launch Rx chain calibration for LF band
+    // REF_IMAGECAL 0X3B, RF_IMAGECAL_IMAGECAL_MASK 0XBF, RF_IMAGECAL_IMAGECAL_RUNNING 0X20
+    
+    /*
     SX1276Write( REG_IMAGECAL, ( SX1276Read( REG_IMAGECAL ) & RF_IMAGECAL_IMAGECAL_MASK ) | RF_IMAGECAL_IMAGECAL_START );
     while( ( SX1276Read( REG_IMAGECAL ) & RF_IMAGECAL_IMAGECAL_RUNNING ) == RF_IMAGECAL_IMAGECAL_RUNNING )
     {
     }
+    */
 
     printf("past first while looop\n");
+
     // Sets a Frequency in HF band
-    SX1276SetChannel( 868000000 );
+    //SX1276SetChannel( 868000000 );
+    SX1276SetChannel( 915000000 );
 
     // Launch Rx chain calibration for HF band
+    /*
     SX1276Write( REG_IMAGECAL, ( SX1276Read( REG_IMAGECAL ) & RF_IMAGECAL_IMAGECAL_MASK ) | RF_IMAGECAL_IMAGECAL_START );
     while( ( SX1276Read( REG_IMAGECAL ) & RF_IMAGECAL_IMAGECAL_RUNNING ) == RF_IMAGECAL_IMAGECAL_RUNNING )
     {
     }
+    */
 
     // Restore context
     SX1276Write( REG_PACONFIG, regPaConfigInitVal );
@@ -654,10 +662,12 @@ void SX1276SetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
                         uint8_t hopPeriod, bool iqInverted, uint32_t timeout )
 {
     SX1276SetModem( modem );
-
+    printf("set modem complete\n");
     SX1276SetStby( );
-
+    printf("set stb complete\n");
     SX1276SetRfTxPower( power );
+
+    printf("set power complete\n");
 
     switch( modem )
     {
@@ -713,6 +723,7 @@ void SX1276SetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
             SX1276.Settings.LoRa.IqInverted = iqInverted;
             SX1276.Settings.LoRa.TxTimeout = timeout;
 
+            printf("settings complete\n");
             if( datarate > 12 )
             {
                 datarate = 12;
@@ -737,6 +748,7 @@ void SX1276SetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
                 SX1276Write( REG_LR_HOPPERIOD, SX1276.Settings.LoRa.HopPeriod );
             }
 
+            printf("conditional block complete\n");
             SX1276Write( REG_LR_MODEMCONFIG1,
                          ( SX1276Read( REG_LR_MODEMCONFIG1 ) &
                            RFLR_MODEMCONFIG1_BW_MASK &
@@ -759,6 +771,7 @@ void SX1276SetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
             SX1276Write( REG_LR_PREAMBLEMSB, ( preambleLen >> 8 ) & 0x00FF );
             SX1276Write( REG_LR_PREAMBLELSB, preambleLen & 0xFF );
 
+            printf("write block complete\n");
             if( datarate == 6 )
             {
                 SX1276Write( REG_LR_DETECTOPTIMIZE,
@@ -850,7 +863,9 @@ void SX1276Send( uint8_t *buffer, uint8_t size )
         {
             if( SX1276.Settings.LoRa.IqInverted == true )
             {
-                SX1276Write( REG_LR_INVERTIQ, ( ( SX1276Read( REG_LR_INVERTIQ ) & RFLR_INVERTIQ_TX_MASK & RFLR_INVERTIQ_RX_MASK ) | RFLR_INVERTIQ_RX_OFF | RFLR_INVERTIQ_TX_ON ) );
+                uint8_t read = SX1276Read( REG_LR_INVERTIQ ) & RFLR_INVERTIQ_TX_MASK & RFLR_INVERTIQ_RX_MASK;
+                SX1276Write( REG_LR_INVERTIQ, ( ( read ) | RFLR_INVERTIQ_RX_OFF | RFLR_INVERTIQ_TX_ON ) );
+                //SX1276Write( REG_LR_INVERTIQ, ( ( SX1276Read( REG_LR_INVERTIQ ) & RFLR_INVERTIQ_TX_MASK & RFLR_INVERTIQ_RX_MASK ) | RFLR_INVERTIQ_RX_OFF | RFLR_INVERTIQ_TX_ON ) );
                 SX1276Write( REG_LR_INVERTIQ2, RFLR_INVERTIQ2_ON );
             }
             else
@@ -901,9 +916,12 @@ void SX1276SetSleep( void )
 void SX1276SetStby( void )
 {
     TimerStop( &RxTimeoutTimer );
+    printf("rx timer complete\n");
     TimerStop( &TxTimeoutTimer );
+    printf("tx timer complete\n");
     TimerStop( &RxTimeoutSyncWord );
 
+    printf("rx timeout complete\n");
     SX1276SetOpMode( RF_OPMODE_STANDBY );
     SX1276.Settings.State = RF_IDLE;
 }
