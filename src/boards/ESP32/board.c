@@ -43,8 +43,9 @@ void BoardCriticalSectionBegin( uint32_t *mask )
 {
     printf("inside board critical section begin\n");
     //xt_ints_off(*mask);
-    taskENTER_CRITICAL_ISR(&lock_name_original);
-    printf("x ints on\n");
+    //taskENTER_CRITICAL_ISR(&lock_name_original);
+    taskENTER_CRITICAL(&lock_name_original);
+    printf("end of board critical section begin\n");
 }
 
 
