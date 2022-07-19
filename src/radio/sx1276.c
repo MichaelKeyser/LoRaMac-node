@@ -307,7 +307,6 @@ TimerEvent_t RxTimeoutSyncWord;
 /*
  * Radio driver functions implementation
  */
-#include "/Users/michael/Documents/Senior_Project/ESP/test_lorawan/main/debug.c"
 void SX1276Init( RadioEvents_t *events )
 {
     uint8_t i;
@@ -319,19 +318,15 @@ void SX1276Init( RadioEvents_t *events )
     TimerInit( &RxTimeoutTimer, SX1276OnTimeoutIrq );
     TimerInit( &RxTimeoutSyncWord, SX1276OnTimeoutIrq );
 
-    printf("timer inits done\n");
     
     SX1276Reset( );
 
-    printf("sx276 reset done\n");
     
     // CHANGE THE FREQUENCY TO 915MHZ
     RxChainCalibration( );
 
-    printf("Calibration works\n");
     SX1276SetOpMode( RF_OPMODE_SLEEP );
 
-    printf("setting opmode works\n");
     SX1276IoIrqInit( DioIrq );
 
     for( i = 0; i < sizeof( RadioRegsInit ) / sizeof( RadioRegisters_t ); i++ )
@@ -453,7 +448,6 @@ static void RxChainCalibration( void )
     // Cut the PA just in case, RFO output, power = -1 dBm
     SX1276Write( REG_PACONFIG, 0x00 );
 
-    printf("before first while loop \n");
     // Launch Rx chain calibration for LF band
     // REF_IMAGECAL 0X3B, RF_IMAGECAL_IMAGECAL_MASK 0XBF, RF_IMAGECAL_IMAGECAL_RUNNING 0X20
     
@@ -464,7 +458,6 @@ static void RxChainCalibration( void )
     }
     */
 
-    printf("past first while looop\n");
 
     // Sets a Frequency in HF band
     //SX1276SetChannel( 868000000 );
@@ -662,12 +655,12 @@ void SX1276SetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
                         uint8_t hopPeriod, bool iqInverted, uint32_t timeout )
 {
     SX1276SetModem( modem );
-    printf("set modem complete\n");
+
     SX1276SetStby( );
-    printf("set stb complete\n");
+ 
     SX1276SetRfTxPower( power );
 
-    printf("set power complete\n");
+
 
     switch( modem )
     {
@@ -723,7 +716,7 @@ void SX1276SetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
             SX1276.Settings.LoRa.IqInverted = iqInverted;
             SX1276.Settings.LoRa.TxTimeout = timeout;
 
-            printf("settings complete\n");
+     
             if( datarate > 12 )
             {
                 datarate = 12;
@@ -748,7 +741,7 @@ void SX1276SetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
                 SX1276Write( REG_LR_HOPPERIOD, SX1276.Settings.LoRa.HopPeriod );
             }
 
-            printf("conditional block complete\n");
+       
             SX1276Write( REG_LR_MODEMCONFIG1,
                          ( SX1276Read( REG_LR_MODEMCONFIG1 ) &
                            RFLR_MODEMCONFIG1_BW_MASK &
@@ -771,7 +764,7 @@ void SX1276SetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
             SX1276Write( REG_LR_PREAMBLEMSB, ( preambleLen >> 8 ) & 0x00FF );
             SX1276Write( REG_LR_PREAMBLELSB, preambleLen & 0xFF );
 
-            printf("write block complete\n");
+           
             if( datarate == 6 )
             {
                 SX1276Write( REG_LR_DETECTOPTIMIZE,
@@ -916,12 +909,8 @@ void SX1276SetSleep( void )
 void SX1276SetStby( void )
 {
     TimerStop( &RxTimeoutTimer );
-    printf("rx timer complete\n");
     TimerStop( &TxTimeoutTimer );
-    printf("tx timer complete\n");
     TimerStop( &RxTimeoutSyncWord );
-
-    printf("rx timeout complete\n");
     SX1276SetOpMode( RF_OPMODE_STANDBY );
     SX1276.Settings.State = RF_IDLE;
 }
