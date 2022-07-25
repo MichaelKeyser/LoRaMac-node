@@ -8,6 +8,8 @@ Functions for interfacing with the SPI
 
 #include "driver/gpio.h"
 #include "esp_log.h"
+
+
 static spi_device_handle_t __spi;
 
 spi_host_device_t Spi_Id_conversion[3] = {SPI1_HOST, SPI2_HOST, SPI3_HOST};
@@ -86,23 +88,24 @@ void SpiInit( Spi_t *obj, SpiId_t spiId, PinNames mosi, PinNames miso, PinNames 
 uint16_t SpiInOut( Spi_t *obj, uint16_t outData )
 {
     // TODO: EDIT TO USE outData !!!!!!
-    //uint8_t out[2] =  {outData & 0xff, outData >> 8}; //= { 0x80 | reg, val };
-    uint16_t in;
+    uint8_t out[2] =  {(uint8_t)(outData >> 8) , (uint8_t)outData}; //= { 0x80 | reg, val };
+    uint8_t in[2];
     spi_transaction_t t = {
         .flags = 0,
-        .length = 8 * sizeof(outData),
-        .tx_buffer = &outData,
-        .rx_buffer = &in  
+        .length = 8 * sizeof(out),
+        .tx_buffer = out,
+        .rx_buffer = in  
     };
 
     // handled when making call to SpiInOut
-    //gpio_set_level((int)obj->Nss.pin, 0);
+    gpio_set_level((int)obj->Nss.pin, 0);
     // ESP32 is little-endian so in uint16_t [7:0] is sent and then [15:8] is set
     esp_err_t ret = spi_device_transmit(__spi, &t); // probably should replace this to get stuff back
+    gpio_set_level((int)obj->Nss.pin, 1);
     assert(ret == ESP_OK);
-    
+    return in[1];
     // handled when making call to SpiInOut
-    //gpio_set_level((int)obj->Nss.pin, 1);
+    
     //printf("Byte sent\n");
     
     //printf("%d\n", in[0]);
@@ -115,7 +118,7 @@ uint16_t SpiInOut( Spi_t *obj, uint16_t outData )
     in_val |= in[1];
     */
    //printf("%d\n", in);
-    return in;
+    
     // TODO: COMPLETE RECEIING PART LATER!
 
 

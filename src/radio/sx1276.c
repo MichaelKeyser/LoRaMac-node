@@ -30,6 +30,7 @@
 #include "delay.h"
 #include "sx1276.h"
 #include "sx1276-board.h"
+//#include "/Users/michael/Documents/Senior_Project/ESP/test_lorawan/main/lora.h"
 
 /*!
  * \brief Internal frequency of the radio
@@ -1316,10 +1317,14 @@ void SX1276WriteBuffer( uint32_t addr, uint8_t *buffer, uint8_t size )
     //NSS = 0;
     GpioWrite( &SX1276.Spi.Nss, 0 );
 
-    SpiInOut( &SX1276.Spi, addr | 0x80 );
+    //SpiInOut( &SX1276.Spi, addr | 0x80 );
     for( i = 0; i < size; i++ )
     {
-        SpiInOut( &SX1276.Spi, buffer[i] );
+        //uint8_t out[2] = { 0x80 | addr, val };
+        uint16_t outData = (((int)addr | 0x80) << 8) | (buffer[i]);
+        //uint16_t outData = { buffer[i] << 8 , ((int)addr | 0x80)};
+        //uint16_t outData = {addr | 0x80 , buffer[i]};
+        SpiInOut( &SX1276.Spi, outData );
     }
 
     //NSS = 1;
@@ -1334,11 +1339,13 @@ void SX1276ReadBuffer( uint32_t addr, uint8_t *buffer, uint8_t size )
     //NSS = 0;
     GpioWrite( &SX1276.Spi.Nss, 0 );
 
-    SpiInOut( &SX1276.Spi, addr & 0x7F );
+    //SpiInOut( &SX1276.Spi, addr & 0x7F );
 
     for( i = 0; i < size; i++ )
     {
-        buffer[i] = SpiInOut( &SX1276.Spi, 0 );
+        uint16_t outData = (int)addr << 8 | 0x00ff;
+        buffer[i] = SpiInOut( &SX1276.Spi, outData );
+        //buffer[i] = SpiInOut( &SX1276.Spi, 0 );
     }
 
     //NSS = 1;
