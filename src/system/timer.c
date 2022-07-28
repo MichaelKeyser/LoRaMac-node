@@ -232,7 +232,6 @@ void TimerIrqHandler( void )
     }
 }
 
-#include "/Users/michael/Documents/Senior_Project/ESP/test_lorawan/main/debug.c"
 
 void TimerStop( TimerEvent_t *obj )
 {

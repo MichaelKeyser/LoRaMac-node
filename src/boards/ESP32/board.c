@@ -32,7 +32,8 @@ void BoardLowPowerHandler( void )
 
 void BoardInitPeriph( void )
 {
-    // is blank in examples
+    // Initalize RTC timers
+    RtcInit();
 }
 
 

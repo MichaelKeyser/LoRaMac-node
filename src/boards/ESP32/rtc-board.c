@@ -2,6 +2,7 @@
 Functions for interfacing with RTC on the ESP
 */
 #include "rtc-board.h"
+#include "driver/timer.h"
 
 // MCU Wake Up Time
 #define MIN_ALARM_DELAY                             3 // in ticks
@@ -43,6 +44,71 @@ Functions for interfacing with RTC on the ESP
 #define  DAYS_IN_MONTH_CORRECTION_NORM              ( ( uint32_t )0x99AAA0 )
 #define  DAYS_IN_MONTH_CORRECTION_LEAP              ( ( uint32_t )0x445550 )
 
+#define TIMER_DIVIDER         (16)  //  Hardware timer clock divider
+#define TIMER_SCALE           (TIMER_BASE_CLK / TIMER_DIVIDER)  // convert counter value to seconds
+
+// Timer for alarm
+#define GROUP0 TIMER_GROUP_0
+#define TIMER0 TIMER_0
+
+
+
+/*!
+ * \brief Initializes the RTC timer
+ *
+ * \remark The timer is based on the RTC
+ */
+void RtcInit( void )
+{
+    // Timer used for the alarms
+    /* Select and initialize basic parameters of the timer */
+    timer_config_t config0 = {
+        .divider = TIMER_DIVIDER,
+        .counter_dir = TIMER_COUNT_UP,
+        .counter_en = TIMER_PAUSE,
+        .alarm_en = TIMER_ALARM_EN,
+        .auto_reload = TIMER_AUTORELOAD_DIS,
+    }; // default clock source is APB
+    timer_init(GROUP0, TIMER0 , &config0);
+    // disable interrupt
+    timer_group_intr_disable(GROUP0, TIMER_INTR_T0);
+
+/*
+    // Timer used for the indefinite timer
+    // Select and initialize basic parameters of the timer 
+    timer_config_t config1 = {
+        .divider = TIMER_DIVIDER,
+        .counter_dir = TIMER_COUNT_UP,
+        .counter_en = TIMER_PAUSE,
+        .alarm_en = TIMER_ALARM_DIS,
+        .auto_reload = TIMER_AUTORELOAD_DIS,
+    }; // default clock source is APB
+    timer_init(GROUP1, TIMER1 , &config1);
+    // disable interrupt
+    timer_group_intr_disable(GROUP1, TIMER_INTR_T1);
+    */
+}
+
+/*!
+ * \brief returns the wake up time in ticks
+ *
+ * \retval wake up time in ticks
+ */
+uint32_t RtcGetMinimumTimeout( void )
+{
+    return( MIN_ALARM_DELAY );
+}
+
+/*!
+ * \brief converts time in ms to time in ticks
+ *
+ * \param[IN] milliseconds Time in milliseconds
+ * \retval returns time in timer ticks
+ */
+uint32_t RtcMs2Tick( uint32_t milliseconds )
+{
+    return ( uint32_t )( ( ( ( uint64_t )milliseconds ) * CONV_DENOM ) / CONV_NUMER );
+}
 
 /*!
  * \brief converts time in ticks to time in ms
@@ -59,37 +125,28 @@ uint32_t RtcTick2Ms( uint32_t tick )
 }
 
 /*!
- * \brief converts time in ms to time in ticks
+ * \brief Performs a delay of milliseconds by polling RTC
  *
- * \param[IN] milliseconds Time in milliseconds
- * \retval returns time in timer ticks
+ * \param[IN] milliseconds Delay in ms
  */
-uint32_t RtcMs2Tick( uint32_t milliseconds )
+#include "esp_system.h"
+void RtcDelayMs( TimerTime_t milliseconds )
 {
-    return ( uint32_t )( ( ( ( uint64_t )milliseconds ) * CONV_DENOM ) / CONV_NUMER );
-}
-
-// TODO: FIX THIS LATER
-uint32_t RtcGetTimerValue( void )
-{
-    /*
-    RTC_TimeTypeDef time;
-    RTC_DateTypeDef date;
-
-    uint32_t calendarValue = ( uint32_t )RtcGetCalendarValue( &date, &time );
-    */
-    return 0;
-    //return( calendarValue );
+    abort();
+    //DelayMs( milliseconds );
 }
 
 /*!
- * \brief returns the wake up time in ticks
+ * \brief Sets the alarm
  *
- * \retval wake up time in ticks
+ * \note The alarm is set at now (read in this funtion) + timeout
+ *
+ * \param timeout [IN] Duration of the Timer ticks
  */
-uint32_t RtcGetMinimumTimeout( void )
+void RtcSetAlarm( uint32_t timeout )
 {
-    return( MIN_ALARM_DELAY );
+    RtcStartAlarm(timeout);
+    //timer_set_counter_value(GROUP, TIMER, 0);
 }
 
 /*!
@@ -97,7 +154,8 @@ uint32_t RtcGetMinimumTimeout( void )
  */
 void RtcStopAlarm( void )
 {
-   
+    // this is the closest to stopping proided by the ESP-IDF
+    timer_pause(GROUP0, TIMER0);
 }
 
 /*!
@@ -107,9 +165,10 @@ void RtcStopAlarm( void )
  *
  * \param [IN] timeout Timeout value in ticks
  */
-uint32_t RtcGetTimerElapsedTime( void )
+void RtcStartAlarm( uint32_t timeout )
 {
-  return 0;
+    timer_set_counter_value(GROUP0, TIMER0, timeout);
+    timer_start(GROUP0, TIMER0);
 }
 
 /*!
@@ -117,36 +176,109 @@ uint32_t RtcGetTimerElapsedTime( void )
  *
  * \retval value Timer reference value in ticks
  */
+#include "esp_system.h"
 uint32_t RtcSetTimerContext( void )
 {
-    /*
-    RtcTimerContext.Time = ( uint32_t )RtcGetCalendarValue( &RtcTimerContext.CalendarDate, &RtcTimerContext.CalendarTime );
-    return ( uint32_t )RtcTimerContext.Time;
-    */
-   return 0;
+    timer_set_counter_value(GROUP0, TIMER0, 0);
+    //timer_start(GROUP0, TIMER0);
+    uint64_t timer_val;
+    timer_get_counter_value(GROUP0, TIMER0, &timer_val);
+
+    return timer_val;
 }
 
 /*!
- * \brief Starts wake up alarm
+ * \brief Gets the RTC timer reference
  *
- * \note  Alarm in RtcTimerContext.Time + timeout
- *
- * \param [IN] timeout Timeout value in ticks
+ * \retval value Timer value in ticks
  */
-void RtcSetAlarm( uint32_t timeout )
+uint32_t RtcGetTimerContext( void )
 {
-    /*
-    // We don't go in Low Power mode for timeout below MIN_ALARM_DELAY
-    if( ( int64_t )MIN_ALARM_DELAY < ( int64_t )( timeout - RtcGetTimerElapsedTime( ) ) )
-    {
-        LpmSetStopMode( LPM_RTC_ID, LPM_ENABLE );
-    }
-    else
-    {
-        LpmSetStopMode( LPM_RTC_ID, LPM_DISABLE );
-    }
+    uint64_t timer_val;
+    timer_get_counter_value(GROUP0, TIMER0, &timer_val);
 
-    RtcStartAlarm( timeout );
-    */
+    return timer_val;
 }
 
+/*!
+ * \brief Gets the system time with the number of seconds elapsed since epoch
+ *
+ * \param [OUT] milliseconds Number of milliseconds elapsed since epoch
+ * \retval seconds Number of seconds elapsed since epoch
+ */
+uint32_t RtcGetCalendarTime( uint16_t *milliseconds )
+{
+    double time;
+    timer_get_counter_time_sec(GROUP0, TIMER0, &time);
+    *milliseconds = time * 1000; // multiply by 10E3 to convert seconds to ms
+    return time;
+}
+
+
+// TODO: FIX THIS LATER
+/*!
+ * \brief Get the RTC timer value
+ *
+ * \retval RTC Timer value
+ */
+uint32_t RtcGetTimerValue( void )
+{
+    uint64_t timer_val;
+    timer_get_counter_value(GROUP0, TIMER0, &timer_val);
+    return timer_val;
+}
+
+/*!
+ * \brief Get the RTC timer elapsed time since the last Alarm was set
+ *
+ * \retval RTC Elapsed time since the last alarm in ticks.
+ */
+uint32_t RtcGetTimerElapsedTime( void )
+{
+    return RtcGetTimerValue();
+}
+
+/*!
+ * \brief Writes data0 and data1 to the RTC backup registers
+ *
+ * \param [IN] data0 1st Data to be written
+ * \param [IN] data1 2nd Data to be written
+ */
+void RtcBkupWrite( uint32_t data0, uint32_t data1 )
+{
+    abort();
+}
+
+/*!
+ * \brief Reads data0 and data1 from the RTC backup registers
+ *
+ * \param [OUT] data0 1st Data to be read
+ * \param [OUT] data1 2nd Data to be read
+ */
+void RtcBkupRead( uint32_t* data0, uint32_t* data1 )
+{
+    abort();
+}
+
+/*!
+ * \brief Processes pending timer events
+ */
+void RtcProcess( void )
+{
+    abort();
+}
+
+/*!
+ * \brief Computes the temperature compensation for a period of time on a
+ *        specific temperature.
+ *
+ * \param [IN] period Time period to compensate in milliseconds
+ * \param [IN] temperature Current temperature
+ *
+ * \retval Compensated time period
+ */
+TimerTime_t RtcTempCompensation( TimerTime_t period, float temperature )
+{
+    abort();
+    return 0;
+}
