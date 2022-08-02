@@ -195,7 +195,7 @@ static uint32_t SX1276GetLoRaTimeOnAirNumerator( uint32_t bandwidth,
 /*!
  * \brief DIO 0 IRQ callback
  */
-static void SX1276OnDio0Irq( void* context );
+void SX1276OnDio0Irq( void* context );
 
 /*!
  * \brief DIO 1 IRQ callback
@@ -294,9 +294,17 @@ SX1276_t SX1276;
 /*!
  * Hardware DIO IRQ callback initialization
  */
-DioIrqHandler *DioIrq[] = { SX1276OnDio0Irq, SX1276OnDio1Irq,
+static void SX1276OnDioIrqWrapper( void* context )
+{
+    DIO0Irq = 1;
+    //SX1276Write( REG_LR_IRQFLAGS, RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL );
+}
+
+DioIrqHandler *DioIrq[] = { SX1276OnDioIrqWrapper, SX1276OnDio1Irq,
                             SX1276OnDio2Irq, SX1276OnDio3Irq,
                             SX1276OnDio4Irq, NULL };
+
+
 
 /*!
  * Tx and Rx timers
@@ -1628,7 +1636,7 @@ static void SX1276OnTimeoutIrq( void* context )
     }
 }
 
-static void SX1276OnDio0Irq( void* context )
+void SX1276OnDio0Irq( void* context )
 {
     volatile uint8_t irqFlags = 0;
 

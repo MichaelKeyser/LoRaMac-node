@@ -36,6 +36,8 @@ extern "C"
 #include "sx1276Regs-Fsk.h"
 #include "sx1276Regs-LoRa.h"
 
+extern int DIO0Irq;
+
 /*!
  * Radio wake-up time from sleep
  */
@@ -444,6 +446,9 @@ void SX1276SetPublicNetwork( bool enable );
  * \retval time Radio plus board wakeup time in ms.
  */
 uint32_t SX1276GetWakeupTime( void );
+
+
+void SX1276OnDio0Irq( void* context );
 
 #ifdef __cplusplus
 }
