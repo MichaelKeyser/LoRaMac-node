@@ -8,7 +8,7 @@ Functions for interfacing with the GPIOs on the ESP. The ESP does not have the s
 
 // Uses the IrqModes in gpio.h as indicies to map to the ESP32 IRQ modes
 gpio_int_type_t IrqModes_conversion[4] = {GPIO_INTR_DISABLE, GPIO_INTR_POSEDGE, GPIO_INTR_NEGEDGE, GPIO_INTR_ANYEDGE};
-gpio_mode_t PinTypes_conversion[3] = {GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_DISABLE, GPIO_MODE_DISABLE};
+gpio_mode_t PinTypes_conversion[4] = {GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_DISABLE, GPIO_MODE_DISABLE};
 
 bool interrupt_setup = false;
 
