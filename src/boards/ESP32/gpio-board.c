@@ -10,7 +10,7 @@ Functions for interfacing with the GPIOs on the ESP. The ESP does not have the s
 gpio_int_type_t IrqModes_conversion[4] = {GPIO_INTR_DISABLE, GPIO_INTR_POSEDGE, GPIO_INTR_NEGEDGE, GPIO_INTR_ANYEDGE};
 gpio_mode_t PinTypes_conversion[3] = {GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_DISABLE, GPIO_MODE_DISABLE};
 
-
+bool interrupt_setup = false;
 
 /*!
  * \brief Initializes the given GPIO object
@@ -61,14 +61,17 @@ void GpioMcuInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, P
     // default the GPIO interrupt to disabled
     gpio.intr_type = GPIO_INTR_DISABLE;
     
+    esp_err_t ret;
     // configure the gpio
-    gpio_config(&gpio);
+    ret = gpio_config(&gpio);
+    assert(ret == ESP_OK);
 
     // set the gpio output if in output mode
     if(mode == PIN_OUTPUT)
     {
         gpio_num_t gpio_num = pin; // ASK ABOUT THE CASTING WITH THIS
-        gpio_set_level(gpio_num, value);
+        ret = gpio_set_level(gpio_num, value);
+        assert(ret == ESP_OK);
     }
     
 
@@ -99,11 +102,26 @@ void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriori
 
     // figure out if enable goes first or last
     gpio_num_t gpio_num = obj->pin;
+    obj->IrqHandler = irqHandler;
+
+    esp_err_t ret;
+    if(!interrupt_setup)
+    {
+        ret = gpio_install_isr_service(ESP_INTR_FLAG_EDGE);
+        assert(ret == ESP_OK);
+        interrupt_setup = true;
+    }
     
+    ret = gpio_isr_handler_add(gpio_num, irqHandler, NULL);
+    assert(ret == ESP_OK);
     gpio_set_intr_type(gpio_num, IrqModes_conversion[irqMode]);
+    assert(ret == ESP_OK);
+    //gpio_set_intr_type(gpio_num, 3);
+
 
     // TODO: FIGURE OUT HOW TO SPECIFY INTERRUPT PRIOTITY
     gpio_intr_enable(gpio_num);
+    assert(ret == ESP_OK);
     //printf("after interrupt enable\n");
 }
 
@@ -115,7 +133,9 @@ void GpioMcuSetInterrupt( Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriori
 void GpioMcuRemoveInterrupt( Gpio_t *obj )
 {
     gpio_num_t gpio_num = obj->pin;
-    gpio_intr_disable(gpio_num); // do error handling later!
+    esp_err_t ret;
+    ret = gpio_intr_disable(gpio_num); 
+    assert(ret == ESP_OK);
 }
 
 /*!
@@ -127,8 +147,9 @@ void GpioMcuRemoveInterrupt( Gpio_t *obj )
 void GpioMcuWrite( Gpio_t *obj, uint32_t value )
 {
     gpio_num_t gpio_num = obj->pin; // ASK ABOUT THE CASTING WITH THIS
-    gpio_set_level(gpio_num, value);
-    // TODO: PUT IN ERROR HANDLING
+    esp_err_t ret;
+    ret = gpio_set_level(gpio_num, value);
+    assert(ret == ESP_OK);
 }
 
 /*!
@@ -142,9 +163,10 @@ void GpioMcuToggle( Gpio_t *obj )
     gpio_num_t gpio_num = obj->pin;
     uint32_t curr_level = GPIO_OUT_REG & ((uint32_t)(1 << gpio_num ));
     
+    esp_err_t ret;
     // set to opposite output value
-    gpio_set_level(gpio_num, (curr_level ^ 1)); // do error checking later 
-    
+    ret = gpio_set_level(gpio_num, (curr_level ^ 1)); // do error checking later 
+    assert(ret == ESP_OK);
 }
 
 /*!

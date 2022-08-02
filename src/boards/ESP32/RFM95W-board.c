@@ -104,6 +104,7 @@ void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
     */
 }
 
+// FIX THIS
 void SX1276IoDeInit( void )
 {
     GpioInit( &SX1276.Spi.Nss, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );

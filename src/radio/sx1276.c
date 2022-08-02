@@ -916,6 +916,10 @@ void SX1276SetStby( void )
     SX1276.Settings.State = RF_IDLE;
 }
 
+/*!
+ * \brief Sets the radio in reception mode for the given time
+ * \param [IN] timeout Reception timeout [ms] [0: continuous, others timeout]
+ */
 void SX1276SetRx( uint32_t timeout )
 {
     bool rxContinuous = false;
@@ -1794,7 +1798,7 @@ static void SX1276OnDio0Irq( void* context )
             {
             case MODEM_LORA:
                 // Clear Irq
-                SX1276Write( REG_LR_IRQFLAGS, RFLR_IRQFLAGS_TXDONE );
+                SX1276Write( REG_LR_IRQFLAGS, RFLR_IRQFLAGS_TXDONE ); 
                 // Intentional fall through
             case MODEM_FSK:
             default:

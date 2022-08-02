@@ -47,34 +47,50 @@ void SpiInit( Spi_t *obj, SpiId_t spiId, PinNames mosi, PinNames miso, PinNames 
     obj->Sclk = sclk_g;
     obj->Nss = nss_g;
     
+    //#define CONFIG_CS_GPIO nss
+    spi_bus_config_t bus = {};
+    bus.miso_io_num = miso;
+    bus.mosi_io_num = mosi;
+    bus.sclk_io_num = sclk;
+
+    /*
+    spi_bus_config_t bus = {
+        .miso_io_num = miso,
+        .mosi_io_num = mosi,
+        .sclk_io_num = sclk,
+        .quadwp_io_num = -1,
+        .quadhd_io_num = -1,
+        .max_transfer_sz = 0
+    };
+    */ 
     
 
-   //#define CONFIG_CS_GPIO nss
+    //#define VSPI_HOST SPI3_HOST //edited to make build work        
+    esp_err_t ret = spi_bus_initialize((int) spiId, &bus, 0); // spiId
+    assert(ret == ESP_OK);
 
-   spi_bus_config_t bus = {
-      .miso_io_num = miso,
-      .mosi_io_num = mosi,
-      .sclk_io_num = sclk,
-      .quadwp_io_num = -1,
-      .quadhd_io_num = -1,
-      .max_transfer_sz = 0
-   }; 
+    spi_device_interface_config_t dev = {};
+    dev.clock_speed_hz = 250000;
+    dev.mode = 0;
+    dev.spics_io_num = -1;
+    dev.queue_size = 1;
+    dev.flags = 0;
+    dev.pre_cb = NULL;
 
-   //#define VSPI_HOST SPI3_HOST //edited to make build work        
-   esp_err_t ret = spi_bus_initialize((int) spiId, &bus, 0); // spiId
-   assert(ret == ESP_OK);
-
-   spi_device_interface_config_t dev = {
-      .clock_speed_hz = 250000,//9000000,
-      .mode = 0,
-      .spics_io_num = -1,
-      .queue_size = 1,
-      .flags = 0,
-      .pre_cb = NULL
-   };
-   ret = spi_bus_add_device((int) spiId, &dev, &__spi); // spiId
-   gpio_set_level((int)obj->Nss.pin, 1); // turn the connection off
-   assert(ret == ESP_OK);
+    /*
+    spi_device_interface_config_t dev = {
+        .clock_speed_hz = 250000,//9000000,
+        .mode = 0,
+        .spics_io_num = -1,
+        .queue_size = 1,
+        .flags = 0,
+        .pre_cb = NULL
+    };
+    */
+    
+    ret = spi_bus_add_device((int) spiId, &dev, &__spi); // spiId
+    gpio_set_level((int)obj->Nss.pin, 1); // turn the connection off
+    assert(ret == ESP_OK);
 }
 
 /*!
@@ -84,10 +100,10 @@ void SpiInit( Spi_t *obj, SpiId_t spiId, PinNames mosi, PinNames miso, PinNames 
  * \param [IN] outData Byte to be sent
  * \retval inData      Received byte.
  */
-#include "/Users/michael/Documents/Senior_Project/ESP/test_lorawan/main/debug.c"
+
 uint16_t SpiInOut( Spi_t *obj, uint16_t outData )
 {
-    // TODO: EDIT TO USE outData !!!!!!
+   
     uint8_t out[2] =  {(uint8_t)(outData >> 8) , (uint8_t)outData}; //= { 0x80 | reg, val };
     uint8_t in[2];
     spi_transaction_t t = {
@@ -101,8 +117,9 @@ uint16_t SpiInOut( Spi_t *obj, uint16_t outData )
     gpio_set_level((int)obj->Nss.pin, 0);
     // ESP32 is little-endian so in uint16_t [7:0] is sent and then [15:8] is set
     esp_err_t ret = spi_device_transmit(__spi, &t); // probably should replace this to get stuff back
-    gpio_set_level((int)obj->Nss.pin, 1);
     assert(ret == ESP_OK);
+    gpio_set_level((int)obj->Nss.pin, 1);
+
     return in[1];
     // handled when making call to SpiInOut
     
