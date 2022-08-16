@@ -3,6 +3,9 @@
 
 #include "esp_system.h"
 
+#define ROW 100
+#define COL 100
+static uint8_t eeprom[ROW][COL];
 
 /*!
  * Writes the given buffer to the EEPROM at the specified address.
@@ -14,7 +17,15 @@
  */
 LmnStatus_t EepromMcuWriteBuffer( uint16_t addr, uint8_t *buffer, uint16_t size )
 {
-    abort();
+    if (addr >= ROW || size >= COL)
+    {
+        abort();
+    }
+    for(int i = 0; i < size; i++)
+    {
+        eeprom[addr][i] = buffer[i];
+    }
+    return LMN_STATUS_OK;
 }
 
 /*!
@@ -27,7 +38,15 @@ LmnStatus_t EepromMcuWriteBuffer( uint16_t addr, uint8_t *buffer, uint16_t size 
  */
 LmnStatus_t EepromMcuReadBuffer( uint16_t addr, uint8_t *buffer, uint16_t size )
 {
-    abort();
+    if (addr >= ROW || size >= COL)
+    {
+        abort();
+    }
+    for(int i = 0; i < size; i++)
+    {
+        buffer[i] = eeprom[addr][i];
+    }
+    return LMN_STATUS_OK;
 }
 
 /*!
