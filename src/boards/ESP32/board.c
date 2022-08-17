@@ -19,6 +19,9 @@ Sets up the ESP and its peripherals
 
 #include <stdio.h>
 #include "esp_log.h"
+
+#include "esp_sleep.h"
+
 void BoardInitMcu()
 {
     SpiInit(&SX1276.Spi, SPI_2, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, 15);
@@ -120,9 +123,13 @@ void BoardGetUniqueId( uint8_t *id )
     abort();
 }
 
+/*!
+ * \brief Manages the entry into ARM cortex deep-sleep mode
+ */
 void BoardLowPowerHandler( void )
 {
-    abort();
+    esp_deep_sleep_start();
+    //abort();
 }
 
 /*!
