@@ -3,6 +3,8 @@ Functions for interfacing with RTC on the ESP
 */
 #include "rtc-board.h"
 #include "driver/timer.h"
+#include "esp_system.h"
+#include "time.h"
 
 // MCU Wake Up Time
 #define MIN_ALARM_DELAY                             3 // in ticks
@@ -51,7 +53,8 @@ Functions for interfacing with RTC on the ESP
 #define GROUP0 TIMER_GROUP_0
 #define TIMER0 TIMER_0
 
-
+uint32_t rtc_seconds;
+uint32_t rtc_subseconds;
 
 /*!
  * \brief Initializes the RTC timer
@@ -129,7 +132,7 @@ uint32_t RtcTick2Ms( uint32_t tick )
  *
  * \param[IN] milliseconds Delay in ms
  */
-#include "esp_system.h"
+
 void RtcDelayMs( TimerTime_t milliseconds )
 {
     abort();
@@ -176,7 +179,6 @@ void RtcStartAlarm( uint32_t timeout )
  *
  * \retval value Timer reference value in ticks
  */
-#include "esp_system.h"
 uint32_t RtcSetTimerContext( void )
 {
     timer_set_counter_value(GROUP0, TIMER0, 0);
@@ -208,10 +210,12 @@ uint32_t RtcGetTimerContext( void )
  */
 uint32_t RtcGetCalendarTime( uint16_t *milliseconds )
 {
-    double time;
-    timer_get_counter_time_sec(GROUP0, TIMER0, &time);
-    *milliseconds = time * 1000; // multiply by 10E3 to convert seconds to ms
-    return time;
+    time_t seconds;
+    time(&seconds);
+
+    *milliseconds = seconds * 1000; // convert s to ms
+    
+    return seconds;
 }
 
 
@@ -246,7 +250,8 @@ uint32_t RtcGetTimerElapsedTime( void )
  */
 void RtcBkupWrite( uint32_t data0, uint32_t data1 )
 {
-    abort();
+    rtc_seconds = data0;
+    rtc_subseconds = data1;
 }
 
 /*!
@@ -257,7 +262,8 @@ void RtcBkupWrite( uint32_t data0, uint32_t data1 )
  */
 void RtcBkupRead( uint32_t* data0, uint32_t* data1 )
 {
-    abort();
+    *data0 = rtc_seconds;
+    *data1 = rtc_subseconds;
 }
 
 /*!
