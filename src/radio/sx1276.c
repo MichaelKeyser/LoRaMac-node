@@ -32,6 +32,10 @@
 #include "sx1276-board.h"
 //#include "/Users/michael/Documents/Senior_Project/ESP/test_lorawan/main/lora.h"
 
+#ifdef DEBUG_MODE
+#include <stdio.h>
+#endif
+
 /*!
  * \brief Internal frequency of the radio
  */
@@ -296,13 +300,15 @@ SX1276_t SX1276;
  */
 static void SX1276OnDioIrqWrapper( void* context )
 {
+    CRITICAL_SECTION_BEGIN();
     DIO0Irq = 1;
+    CRITICAL_SECTION_END();
     //SX1276Write( REG_LR_IRQFLAGS, RFLR_IRQFLAGS_FHSSCHANGEDCHANNEL );
 }
 
 DioIrqHandler *DioIrq[] = { SX1276OnDioIrqWrapper, SX1276OnDio1Irq,
                             SX1276OnDio2Irq, SX1276OnDio3Irq,
-                            SX1276OnDio4Irq, NULL };
+                            SX1276OnDio4Irq, NULL }; //SX1276OnDioIrqWrapper
 
 
 
@@ -827,6 +833,7 @@ uint32_t SX1276GetTimeOnAir( RadioModems_t modem, uint32_t bandwidth,
 
 void SX1276Send( uint8_t *buffer, uint8_t size )
 {
+    printf("sending %d bytes\n", size);
     uint32_t txTimeout = 0;
 
     switch( SX1276.Settings.Modem )
@@ -892,7 +899,20 @@ void SX1276Send( uint8_t *buffer, uint8_t size )
                 DelayMs( 1 );
             }
             // Write payload buffer
-            SX1276WriteFifo( buffer, size );
+            
+            // for debugging
+            
+            #ifdef DEBUG_MODE
+            buffer[0] = 'H';
+            buffer[1] = 'I';
+            for(int b = 0; b < size; b++)
+            {
+                printf("%x-", buffer[b]);
+            }
+            printf("\nsending paylod buffer\n");
+            #endif
+            SX1276WriteFifo(buffer, size ); // did have buffer here
+            printf("payload buffer sent\n");
             txTimeout = SX1276.Settings.LoRa.TxTimeout;
         }
         break;

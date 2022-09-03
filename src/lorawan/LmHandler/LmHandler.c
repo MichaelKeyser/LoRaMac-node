@@ -39,8 +39,11 @@
 
 
 #define ACTIVE_REGION LORAMAC_REGION_US915
-#define LORAWAN_DEVICE_ADDRESS 0
-#warning "temp device address being used in LmHanlder.c"
+
+//#define LORAWAN_DEVICE_ADDRESS 1 // THIS WAS 0
+//#warning "temp device address being used in LmHanlder.c"
+
+
 #ifndef ACTIVE_REGION
 
 #warning "No active region defined, LORAMAC_REGION_EU868 will be used as default."

@@ -87,8 +87,8 @@ uint32_t BoardGetBatteryVoltage( void )
  */
 uint8_t BoardGetBatteryLevel( void )
 {
-    abort();
-    return 0;
+    //abort();
+    return 1;
 }
 
 /*!
