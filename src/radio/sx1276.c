@@ -902,15 +902,15 @@ void SX1276Send( uint8_t *buffer, uint8_t size )
             
             // for debugging
             
+            
             #ifdef DEBUG_MODE
-            buffer[0] = 'H';
-            buffer[1] = 'I';
             for(int b = 0; b < size; b++)
             {
                 printf("%x-", buffer[b]);
             }
             printf("\nsending paylod buffer\n");
             #endif
+            
             SX1276WriteFifo(buffer, size ); // did have buffer here
             printf("payload buffer sent\n");
             txTimeout = SX1276.Settings.LoRa.TxTimeout;

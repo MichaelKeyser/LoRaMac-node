@@ -552,12 +552,39 @@ bool RegionUS915TxConfig( TxConfigParams_t* txConfig, int8_t* txPower, TimerTime
     phyTxPower = RegionCommonComputeTxPower( txPowerLimited, US915_DEFAULT_MAX_ERP, 0 );
 
     // Setup the radio frequency
-    Radio.SetChannel( RegionNvmGroup2->Channels[txConfig->Channel].Frequency );
+    //Radio.SetChannel( RegionNvmGroup2->Channels[txConfig->Channel].Frequency );
 
-    Radio.SetTxConfig( MODEM_LORA, phyTxPower, 0, bandwidth, phyDr, 1, 8, false, true, 0, 0, false, 4000 );
+    //Radio.SetTxConfig( MODEM_LORA, phyTxPower, 0, bandwidth, phyDr, 1, 8, false, true, 0, 0, false, 4000 );
 
     // Setup maximum payload lenght of the radio driver
-    Radio.SetMaxPayloadLength( MODEM_LORA, txConfig->PktLen );
+    //Radio.SetMaxPayloadLength( MODEM_LORA, txConfig->PktLen );
+
+    #ifdef DEBUG_MODE
+
+    #define TX_OUTPUT_POWER                             14        // dBm
+    #define LORA_BANDWIDTH                              0         // [0: 125 kHz,
+                                                              //  1: 250 kHz,
+                                                              //  2: 500 kHz,
+                                                              //  3: Reserved]
+    #define LORA_SPREADING_FACTOR                       7         // [SF7..SF12]
+    #define LORA_CODINGRATE                             1         // [1: 4/5,
+                                                                    //  2: 4/6,
+                                                                    //  3: 4/7,
+                                                                    //  4: 4/8]
+    #define LORA_PREAMBLE_LENGTH                        8         // Same for Tx and Rx
+    #define LORA_SYMBOL_TIMEOUT                         5         // Symbols
+    #define LORA_FIX_LENGTH_PAYLOAD_ON                  false
+    #define LORA_IQ_INVERSION_ON                        false
+    
+    
+    //Radio.SetChannel( 915000000 );
+    Radio.SetChannel(905300000);
+    Radio.SetTxConfig( MODEM_LORA, TX_OUTPUT_POWER, 0, LORA_BANDWIDTH,
+                                   LORA_SPREADING_FACTOR, LORA_CODINGRATE,
+                                   LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
+                                   true, 0, 0, LORA_IQ_INVERSION_ON, 3000 );
+    Radio.SetMaxPayloadLength( MODEM_LORA, 64 );
+    #endif
 
     // Update time-on-air
     *txTimeOnAir = GetTimeOnAir( txConfig->Datarate, txConfig->PktLen );
