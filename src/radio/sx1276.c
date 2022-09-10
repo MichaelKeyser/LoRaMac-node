@@ -362,6 +362,7 @@ RadioState_t SX1276GetStatus( void )
 
 void SX1276SetChannel( uint32_t freq )
 {
+    
     uint32_t freqInPllSteps = SX1276ConvertFreqInHzToPllStep( freq );
 
     SX1276.Settings.Channel = freq;
@@ -369,6 +370,16 @@ void SX1276SetChannel( uint32_t freq )
     SX1276Write( REG_FRFMSB, ( uint8_t )( ( freqInPllSteps >> 16 ) & 0xFF ) );
     SX1276Write( REG_FRFMID, ( uint8_t )( ( freqInPllSteps >> 8 ) & 0xFF ) );
     SX1276Write( REG_FRFLSB, ( uint8_t )( freqInPllSteps & 0xFF ) );
+    
+    /*
+    uint64_t frf = ((uint64_t)freq << 19) / 32000000;
+
+    SX1276.Settings.Channel = freq;
+
+    SX1276Write( REG_FRFMSB, ( uint8_t )( ( frf >> 16 )));
+    SX1276Write( REG_FRFMID, ( uint8_t )( ( frf >> 8 ) ));
+    SX1276Write( REG_FRFLSB, ( uint8_t )( frf >> 0 ) );
+    */
 }
 
 bool SX1276IsChannelFree( uint32_t freq, uint32_t rxBandwidth, int16_t rssiThresh, uint32_t maxCarrierSenseTime )
